@@ -1,0 +1,39 @@
+---
+- name: Frontend Configuration
+  hosts: frontend-machine
+  become: true  # Run tasks with sudo
+
+  tasks:
+    - name: Fail if RAM is less than 1GB
+      ansible.builtin.shell: "free -m | awk '/Mem:/ {print $2}'"
+      register: memory_check
+      failed_when: memory_check.stdout | int < 950
+
+    - name: Install NGINX
+      ansible.builtin.apt:
+        name: nginx
+        state: present
+        update_cache: yes
+      notify: Restart NGINX  # Calls the handler if changed
+
+    - name: Install essential packages
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - vim
+        - curl
+        - git
+
+    - name: Deploy a simple web page
+      ansible.builtin.copy:
+        content: "<h1>Welcome to My Frontend Server Eng Moataz!</h1>"
+        dest: /var/www/html/index.html
+        mode: '0644'
+      notify: Restart NGINX  # Calls the handler if changed
+
+  handlers:
+    - name: Restart NGINX
+      ansible.builtin.service:
+        name: nginx
+        state: restarted
