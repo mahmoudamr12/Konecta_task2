@@ -1,0 +1,10 @@
+---
+- name: Copy file to EC2 instance
+  hosts: ec2
+  become: false
+  tasks:
+    - name: Copy konecta_task-kp.pem to remote machine
+      copy:
+        src: /home/mahmoud/konecta_task02/konecta_task2-kp.pem
+        dest: /home/ubuntu/konecta_task-kp.pem
+        mode: '0600'
