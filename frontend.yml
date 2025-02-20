@@ -1,7 +1,7 @@
 ---
 - name: Frontend Configuration
   hosts: frontend-machine
-  become: true  # Run tasks with sudo
+  become: true  
 
   tasks:
     - name: Fail if RAM is less than 1GB
@@ -14,7 +14,7 @@
         name: nginx
         state: present
         update_cache: yes
-      notify: Restart NGINX  # Calls the handler if changed
+      notify: Restart NGINX  
 
     - name: Install essential packages
       ansible.builtin.apt:
@@ -30,7 +30,7 @@
         content: "<h1>Welcome to My Frontend Server Eng Moataz!</h1>"
         dest: /var/www/html/index.html
         mode: '0644'
-      notify: Restart NGINX  # Calls the handler if changed
+      notify: Restart NGINX  
 
   handlers:
     - name: Restart NGINX
