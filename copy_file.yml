@@ -1,10 +1,16 @@
----
-- name: Copy file to EC2 instance
+- name: Copy multiple files to EC2 instance
   hosts: ec2
-  become: false
+  become: true
+
   tasks:
-    - name: Copy konecta_task-kp.pem to remote machine
-      copy:
-        src: /home/mahmoud/konecta_task02/konecta_task2-kp.pem
-        dest: /home/ubuntu/konecta_task-kp.pem
-        mode: '0600'
+    - name: Copy key files to remote machine
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "/home/ubuntu/{{ item | basename }}"
+        owner: ubuntu
+        group: ubuntu
+        mode: '600'
+      loop:
+        - konecta_task2-kp.pem
+        - konecta_task2_frontend_kp.pem
+        - konecta_task2_docker_kp.pem
